@@ -107,7 +107,9 @@ namespace MscrmTools.SolutionTableIntegrityManager
                         return;
                     }
 
-                    solutionPicker1_SolutionSelected(solutionPicker1, new UserControls.SolutionSelectedEventArgs(solutionPicker1.SelectedSolution));
+                    if (!isSimulation) { 
+                        solutionPicker1_SolutionSelected(solutionPicker1, new UserControls.SolutionSelectedEventArgs(solutionPicker1.SelectedSolution));
+                    }
 
                     if (isSimulation && sender == fixControl2 || sender == fixControl4)
                     {
