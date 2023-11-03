@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using MscrmTools.SolutionTableIntegrityManager.AppCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
 {
     public partial class SolutionPicker : UserControl
     {
+        private int orderColumn = -1;
         private List<Entity> solutions = new List<Entity>();
 
         public SolutionPicker()
@@ -51,6 +53,13 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
                     }
                 }
             }).Entities.ToList();
+        }
+
+        private void lvSolutions_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (orderColumn != e.Column) lvSolutions.Sorting = SortOrder.Ascending;
+            else lvSolutions.Sorting = lvSolutions.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+            lvSolutions.ListViewItemSorter = new ListViewItemComparer(e.Column, lvSolutions.Sorting);
         }
 
         private void lvSolutions_SelectedIndexChanged(object sender, EventArgs e)

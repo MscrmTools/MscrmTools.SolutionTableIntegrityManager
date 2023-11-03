@@ -36,13 +36,15 @@
             this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chUniqueName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chManaged = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chReason = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsbCheckFaulty = new System.Windows.Forms.ToolStripButton();
             this.tsbUncheckAll = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbShowOnlyFaulty = new System.Windows.Forms.ToolStripButton();
             this.tsbShowAll = new System.Windows.Forms.ToolStripButton();
-            this.chReason = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbCheckManagedTables = new System.Windows.Forms.ToolStripButton();
             this.pnlMain.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -86,14 +88,15 @@
             this.lvSolutions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvSolutions.FullRowSelect = true;
             this.lvSolutions.HideSelection = false;
-            this.lvSolutions.Location = new System.Drawing.Point(0, 34);
+            this.lvSolutions.Location = new System.Drawing.Point(0, 86);
             this.lvSolutions.MultiSelect = false;
             this.lvSolutions.Name = "lvSolutions";
-            this.lvSolutions.Size = new System.Drawing.Size(738, 942);
+            this.lvSolutions.Size = new System.Drawing.Size(1107, 1379);
             this.lvSolutions.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvSolutions.TabIndex = 2;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
+            this.lvSolutions.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvSolutions_ColumnClick);
             // 
             // chName
             // 
@@ -110,6 +113,11 @@
             this.chManaged.Text = "Is managed";
             this.chManaged.Width = 150;
             // 
+            // chReason
+            // 
+            this.chReason.Text = "Reason";
+            this.chReason.Width = 300;
+            // 
             // toolStrip1
             // 
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
@@ -118,10 +126,12 @@
             this.tsbUncheckAll,
             this.toolStripSeparator1,
             this.tsbShowOnlyFaulty,
-            this.tsbShowAll});
+            this.tsbShowAll,
+            this.toolStripSeparator2,
+            this.tsbCheckManagedTables});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(738, 34);
+            this.toolStrip1.Size = new System.Drawing.Size(1107, 57);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
@@ -132,7 +142,7 @@
             this.tsbCheckFaulty.Image = ((System.Drawing.Image)(resources.GetObject("tsbCheckFaulty.Image")));
             this.tsbCheckFaulty.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbCheckFaulty.Name = "tsbCheckFaulty";
-            this.tsbCheckFaulty.Size = new System.Drawing.Size(186, 29);
+            this.tsbCheckFaulty.Size = new System.Drawing.Size(186, 52);
             this.tsbCheckFaulty.Text = "Check all faulty tables";
             // 
             // tsbUncheckAll
@@ -141,13 +151,13 @@
             this.tsbUncheckAll.Image = ((System.Drawing.Image)(resources.GetObject("tsbUncheckAll.Image")));
             this.tsbUncheckAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbUncheckAll.Name = "tsbUncheckAll";
-            this.tsbUncheckAll.Size = new System.Drawing.Size(102, 29);
+            this.tsbUncheckAll.Size = new System.Drawing.Size(102, 52);
             this.tsbUncheckAll.Text = "UncheckAll";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 34);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 57);
             // 
             // tsbShowOnlyFaulty
             // 
@@ -155,7 +165,7 @@
             this.tsbShowOnlyFaulty.Image = ((System.Drawing.Image)(resources.GetObject("tsbShowOnlyFaulty.Image")));
             this.tsbShowOnlyFaulty.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbShowOnlyFaulty.Name = "tsbShowOnlyFaulty";
-            this.tsbShowOnlyFaulty.Size = new System.Drawing.Size(200, 29);
+            this.tsbShowOnlyFaulty.Size = new System.Drawing.Size(200, 52);
             this.tsbShowOnlyFaulty.Text = "Show only faulty tables";
             // 
             // tsbShowAll
@@ -164,13 +174,22 @@
             this.tsbShowAll.Image = ((System.Drawing.Image)(resources.GetObject("tsbShowAll.Image")));
             this.tsbShowAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbShowAll.Name = "tsbShowAll";
-            this.tsbShowAll.Size = new System.Drawing.Size(82, 29);
+            this.tsbShowAll.Size = new System.Drawing.Size(82, 52);
             this.tsbShowAll.Text = "Show all";
             // 
-            // chReason
+            // toolStripSeparator2
             // 
-            this.chReason.Text = "Reason";
-            this.chReason.Width = 300;
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 57);
+            // 
+            // tsbCheckManagedTables
+            // 
+            this.tsbCheckManagedTables.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbCheckManagedTables.Image = ((System.Drawing.Image)(resources.GetObject("tsbCheckManagedTables.Image")));
+            this.tsbCheckManagedTables.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCheckManagedTables.Name = "tsbCheckManagedTables";
+            this.tsbCheckManagedTables.Size = new System.Drawing.Size(195, 52);
+            this.tsbCheckManagedTables.Text = "Check managed tables";
             // 
             // TablePicker
             // 
@@ -205,5 +224,7 @@
         private System.Windows.Forms.ToolStripButton tsbShowOnlyFaulty;
         private System.Windows.Forms.ToolStripButton tsbShowAll;
         private System.Windows.Forms.ColumnHeader chReason;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton tsbCheckManagedTables;
     }
 }

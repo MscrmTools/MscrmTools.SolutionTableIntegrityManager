@@ -207,6 +207,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppCode\ActiveLayerSearch.cs" />
+    <Compile Include="AppCode\ListViewItemComparer.cs" />
+    <Compile Include="AppCode\OnApplyFixEventArgs.cs" />
     <Compile Include="AppCode\Table.cs" />
     <Compile Include="AppCode\TableCleaner.cs" />
     <Compile Include="AppCode\TableLog.cs" />
@@ -250,6 +252,12 @@
     <Compile Include="UserControls\ProgressControl.Designer.cs">
       <DependentUpon>ProgressControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\SelectiveApplier.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\SelectiveApplier.Designer.cs">
+      <DependentUpon>SelectiveApplier.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\TablePicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -286,6 +294,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\ProgressControl.resx">
       <DependentUpon>ProgressControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\SelectiveApplier.resx">
+      <DependentUpon>SelectiveApplier.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\TablePicker.resx">
       <DependentUpon>TablePicker.cs</DependentUpon>

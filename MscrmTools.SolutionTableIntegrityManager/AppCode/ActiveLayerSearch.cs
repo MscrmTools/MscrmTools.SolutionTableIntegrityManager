@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,10 +29,10 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             };
         }
 
-        public List<Guid> GetActiveLayers(List<Guid> componentIds, BackgroundWorker bw, string componentName)
+        public Dictionary<Guid, string> GetActiveLayers(List<Guid> componentIds, BackgroundWorker bw, string componentName)
         {
             _bulk.Requests = new OrganizationRequestCollection();
-            var changedItemsId = new List<Guid>();
+            var changedItemsId = new Dictionary<Guid, string>();
             decimal progress = 0;
             int processed = 0;
             bool needPrecision = false;
@@ -44,7 +45,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
                     Query = new QueryExpression("msdyn_componentlayer")
                     {
                         NoLock = true,
-                        ColumnSet = new ColumnSet(true),
+                        ColumnSet = new ColumnSet("msdyn_changes"),
                         Criteria = new FilterExpression
                         {
                             Conditions =
@@ -64,7 +65,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
                 {
                     if (progress < 100 || needPrecision)
                     {
-                        bw.ReportProgress(0, $"Loading active layers for {componentName} ({Convert.ToInt32(progress)}%)...");
+                        //bw.ReportProgress(0, $"Loading active layers for {componentName} ({Convert.ToInt32(progress)}%)...");
                         needPrecision = true;
                     }
 
@@ -76,7 +77,8 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
 
                         if (((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.Count == 1)
                         {
-                            changedItemsId.Add(objectId);
+                          
+                            changedItemsId.Add(objectId, ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.First().GetAttributeValue<string>("msdyn_changes"));
                         }
                     }
 
@@ -88,7 +90,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             {
                 if (progress < 100 || needPrecision)
                 {
-                    bw.ReportProgress(0, $"Loading active layers for {componentName} ({Convert.ToInt32(progress)}%)...");
+                    //bw.ReportProgress(0, $"Loading active layers for {componentName} ({Convert.ToInt32(progress)}%)...");
                 }
 
                 var bulkResp = (ExecuteMultipleResponse)_service.Execute(_bulk);
@@ -99,7 +101,9 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
 
                     if (((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.Count == 1)
                     {
-                        changedItemsId.Add(objectId);
+                      
+                        changedItemsId.Add(objectId, ((RetrieveMultipleResponse)response.Response).EntityCollection.Entities.First().GetAttributeValue<string>("msdyn_changes"));
+                       
                     }
                 }
             }

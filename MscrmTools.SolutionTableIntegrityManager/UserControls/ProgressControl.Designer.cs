@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProgressControl));
             this.pnlFooter = new System.Windows.Forms.Panel();
+            this.btnExportLogs = new System.Windows.Forms.Button();
             this.btnClearLogs = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.lvLogs = new System.Windows.Forms.ListView();
@@ -39,26 +40,39 @@
             this.chComponent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.btnExportLogs = new System.Windows.Forms.Button();
+            this.chChangedProperties = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.btnOpenSelectiveApplier = new System.Windows.Forms.Button();
             this.pnlFooter.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlFooter
             // 
+            this.pnlFooter.Controls.Add(this.btnOpenSelectiveApplier);
             this.pnlFooter.Controls.Add(this.btnExportLogs);
             this.pnlFooter.Controls.Add(this.btnClearLogs);
             this.pnlFooter.Controls.Add(this.btnClose);
             this.pnlFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlFooter.Location = new System.Drawing.Point(10, 546);
+            this.pnlFooter.Location = new System.Drawing.Point(10, 553);
             this.pnlFooter.Name = "pnlFooter";
             this.pnlFooter.Padding = new System.Windows.Forms.Padding(10);
-            this.pnlFooter.Size = new System.Drawing.Size(1334, 51);
+            this.pnlFooter.Size = new System.Drawing.Size(1343, 51);
             this.pnlFooter.TabIndex = 1;
+            // 
+            // btnExportLogs
+            // 
+            this.btnExportLogs.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnExportLogs.Location = new System.Drawing.Point(1017, 10);
+            this.btnExportLogs.Name = "btnExportLogs";
+            this.btnExportLogs.Size = new System.Drawing.Size(106, 31);
+            this.btnExportLogs.TabIndex = 3;
+            this.btnExportLogs.Text = "Export logs";
+            this.btnExportLogs.UseVisualStyleBackColor = true;
+            this.btnExportLogs.Click += new System.EventHandler(this.btnExportLogs_Click);
             // 
             // btnClearLogs
             // 
             this.btnClearLogs.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnClearLogs.Location = new System.Drawing.Point(1114, 10);
+            this.btnClearLogs.Location = new System.Drawing.Point(1123, 10);
             this.btnClearLogs.Name = "btnClearLogs";
             this.btnClearLogs.Size = new System.Drawing.Size(106, 31);
             this.btnClearLogs.TabIndex = 2;
@@ -69,7 +83,7 @@
             // btnClose
             // 
             this.btnClose.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnClose.Location = new System.Drawing.Point(1220, 10);
+            this.btnClose.Location = new System.Drawing.Point(1229, 10);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(104, 31);
             this.btnClose.TabIndex = 1;
@@ -83,12 +97,13 @@
             this.chTable,
             this.chType,
             this.chComponent,
-            this.chMessage});
+            this.chMessage,
+            this.chChangedProperties});
             this.lvLogs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvLogs.HideSelection = false;
             this.lvLogs.Location = new System.Drawing.Point(10, 10);
             this.lvLogs.Name = "lvLogs";
-            this.lvLogs.Size = new System.Drawing.Size(1334, 536);
+            this.lvLogs.Size = new System.Drawing.Size(1343, 543);
             this.lvLogs.SmallImageList = this.imageList1;
             this.lvLogs.TabIndex = 2;
             this.lvLogs.UseCompatibleStateImageBehavior = false;
@@ -112,7 +127,7 @@
             // chMessage
             // 
             this.chMessage.Text = "Message";
-            this.chMessage.Width = 800;
+            this.chMessage.Width = 400;
             // 
             // imageList1
             // 
@@ -130,16 +145,22 @@
             this.imageList1.Images.SetKeyName(9, "loop.png");
             this.imageList1.Images.SetKeyName(10, "button.png");
             // 
-            // btnExportLogs
+            // chChangedProperties
             // 
-            this.btnExportLogs.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnExportLogs.Location = new System.Drawing.Point(1008, 10);
-            this.btnExportLogs.Name = "btnExportLogs";
-            this.btnExportLogs.Size = new System.Drawing.Size(106, 31);
-            this.btnExportLogs.TabIndex = 3;
-            this.btnExportLogs.Text = "Export logs";
-            this.btnExportLogs.UseVisualStyleBackColor = true;
-            this.btnExportLogs.Click += new System.EventHandler(this.btnExportLogs_Click);
+            this.chChangedProperties.Text = "Changed properties";
+            this.chChangedProperties.Width = 150;
+            // 
+            // btnOpenSelectiveApplier
+            // 
+            this.btnOpenSelectiveApplier.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnOpenSelectiveApplier.Location = new System.Drawing.Point(10, 10);
+            this.btnOpenSelectiveApplier.Name = "btnOpenSelectiveApplier";
+            this.btnOpenSelectiveApplier.Size = new System.Drawing.Size(324, 31);
+            this.btnOpenSelectiveApplier.TabIndex = 4;
+            this.btnOpenSelectiveApplier.Text = "Select items to add to your solution";
+            this.btnOpenSelectiveApplier.UseVisualStyleBackColor = true;
+            this.btnOpenSelectiveApplier.Visible = false;
+            this.btnOpenSelectiveApplier.Click += new System.EventHandler(this.btnOpenSelectiveApplier_Click);
             // 
             // ProgressControl
             // 
@@ -149,7 +170,7 @@
             this.Controls.Add(this.pnlFooter);
             this.Name = "ProgressControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(1354, 607);
+            this.Size = new System.Drawing.Size(1363, 614);
             this.pnlFooter.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -167,5 +188,7 @@
         private System.Windows.Forms.ColumnHeader chMessage;
         private System.Windows.Forms.ColumnHeader chComponent;
         private System.Windows.Forms.Button btnExportLogs;
+        private System.Windows.Forms.ColumnHeader chChangedProperties;
+        private System.Windows.Forms.Button btnOpenSelectiveApplier;
     }
 }

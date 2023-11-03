@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -16,6 +17,10 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
 
         public event EventHandler CloseRequested;
 
+        public event EventHandler<OnApplyFixEventArgs> OnApply;
+
+        public FixControl FixSender { get; internal set; }
+
         public void AddLog(TableLog log, int imageIndex)
         {
             var item = new ListViewItem
@@ -25,12 +30,24 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
                     new ListViewItem.ListViewSubItem{Text = log.Type},
                     new ListViewItem.ListViewSubItem{Text = log.ComponentName},
                     new ListViewItem.ListViewSubItem{Text = log.Message},
+                    new ListViewItem.ListViewSubItem{Text = log.GetChangedPropertiesNames()},
                     },
                 ImageIndex = imageIndex,
+                Tag = log
             };
 
             lvLogs.Items.Add(item);
             item.EnsureVisible();
+        }
+
+        public void SetSelectiveApplierButtonVisibility(bool isVisible)
+        {
+            btnOpenSelectiveApplier.Visible = isVisible;
+        }
+
+        internal void Clear()
+        {
+            lvLogs.Items.Clear();
         }
 
         private void btnClearLogs_Click(object sender, EventArgs e)
@@ -61,14 +78,32 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
                             writer.WriteLine($"{item.Text},{item.SubItems[1].Text},{item.SubItems[2].Text},{item.SubItems[3].Text}");
                         }
                     }
-                }
 
-                var open = MessageBox.Show(this, $"File saved to {sfd.FileName}\n\nDo you want to open it now?", "Export completed", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                if (open == DialogResult.Yes)
-                {
-                    Process.Start(sfd.FileName);
+                    var open = MessageBox.Show(this, $"File saved to {sfd.FileName}\n\nDo you want to open it now?", "Export completed", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                    if (open == DialogResult.Yes)
+                    {
+                        Process.Start(sfd.FileName);
+                    }
                 }
             }
+        }
+
+        private void btnOpenSelectiveApplier_Click(object sender, EventArgs e)
+        {
+            var ctrl = new SelectiveApplier(lvLogs.Items.Cast<ListViewItem>().Where(i => ((TableLog)i.Tag).Type != "Information" && ((TableLog)i.Tag).ChangedProperties?.Length > 0).Select(i => (TableLog)i.Tag).ToList(), FixSender.Name == "fixControl2");
+            ctrl.Name = "selectiveApplier1";
+            ctrl.OnClose += (s, evt) => { Controls.Remove(ctrl); ctrl.Dispose(); };
+            ctrl.OnApply += (s, evt) =>
+            {
+                Controls.Remove(ctrl); ctrl.Dispose();
+                OnApply?.Invoke(this, evt);
+            };
+
+            Control parent = Parent;
+            while (!(parent is PluginControl)) parent = parent.Parent;
+
+            parent.Controls.Add(ctrl);
+            ctrl.BringToFront();
         }
     }
 }

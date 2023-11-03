@@ -1,4 +1,6 @@
-﻿namespace MscrmTools.SolutionTableIntegrityManager
+﻿using System;
+
+namespace MscrmTools.SolutionTableIntegrityManager
 {
     partial class PluginControl
     {
@@ -42,6 +44,8 @@
             this.scMain = new System.Windows.Forms.SplitContainer();
             this.progressControl1 = new MscrmTools.SolutionTableIntegrityManager.UserControls.ProgressControl();
             this.pnlResult = new System.Windows.Forms.Panel();
+            this.fixControl4 = new MscrmTools.SolutionTableIntegrityManager.UserControls.FixControl();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.pnlSeparator1 = new System.Windows.Forms.Panel();
             this.pnlSeparator2 = new System.Windows.Forms.Panel();
             this.pnlMode = new System.Windows.Forms.Panel();
@@ -75,8 +79,8 @@
             // scSolutions.Panel2
             // 
             this.scSolutions.Panel2.Controls.Add(this.tablePicker1);
-            this.scSolutions.Size = new System.Drawing.Size(1078, 1197);
-            this.scSolutions.SplitterDistance = 282;
+            this.scSolutions.Size = new System.Drawing.Size(1145, 1328);
+            this.scSolutions.SplitterDistance = 299;
             this.scSolutions.TabIndex = 5;
             // 
             // solutionPicker1
@@ -84,7 +88,7 @@
             this.solutionPicker1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.solutionPicker1.Location = new System.Drawing.Point(0, 34);
             this.solutionPicker1.Name = "solutionPicker1";
-            this.solutionPicker1.Size = new System.Drawing.Size(282, 1163);
+            this.solutionPicker1.Size = new System.Drawing.Size(299, 1294);
             this.solutionPicker1.TabIndex = 2;
             this.solutionPicker1.SolutionSelected += new System.EventHandler<MscrmTools.SolutionTableIntegrityManager.UserControls.SolutionSelectedEventArgs>(this.solutionPicker1_SolutionSelected);
             // 
@@ -95,7 +99,7 @@
             this.tsbLoadSolutions});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(282, 34);
+            this.toolStrip1.Size = new System.Drawing.Size(299, 34);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -112,7 +116,7 @@
             this.tablePicker1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tablePicker1.Location = new System.Drawing.Point(0, 0);
             this.tablePicker1.Name = "tablePicker1";
-            this.tablePicker1.Size = new System.Drawing.Size(792, 1197);
+            this.tablePicker1.Size = new System.Drawing.Size(842, 1328);
             this.tablePicker1.TabIndex = 0;
             // 
             // goodPracticeControl2
@@ -194,7 +198,7 @@
             // 
             this.scMain.Panel2.Controls.Add(this.progressControl1);
             this.scMain.Panel2Collapsed = true;
-            this.scMain.Size = new System.Drawing.Size(1078, 1197);
+            this.scMain.Size = new System.Drawing.Size(1145, 1328);
             this.scMain.SplitterDistance = 817;
             this.scMain.TabIndex = 6;
             // 
@@ -206,10 +210,13 @@
             this.progressControl1.Padding = new System.Windows.Forms.Padding(10);
             this.progressControl1.Size = new System.Drawing.Size(150, 46);
             this.progressControl1.TabIndex = 0;
+            this.progressControl1.OnApply += new System.EventHandler<MscrmTools.SolutionTableIntegrityManager.AppCode.OnApplyFixEventArgs>(this.progressControl1_OnApply);
             // 
             // pnlResult
             // 
             this.pnlResult.AutoScroll = true;
+            this.pnlResult.Controls.Add(this.fixControl4);
+            this.pnlResult.Controls.Add(this.panel1);
             this.pnlResult.Controls.Add(this.fixControl3);
             this.pnlResult.Controls.Add(this.pnlSeparator1);
             this.pnlResult.Controls.Add(this.fixControl2);
@@ -219,11 +226,34 @@
             this.pnlResult.Controls.Add(this.badPracticeControl1);
             this.pnlResult.Controls.Add(this.goodPracticeControl2);
             this.pnlResult.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlResult.Location = new System.Drawing.Point(1078, 0);
+            this.pnlResult.Location = new System.Drawing.Point(1145, 0);
             this.pnlResult.Name = "pnlResult";
             this.pnlResult.Padding = new System.Windows.Forms.Padding(10);
-            this.pnlResult.Size = new System.Drawing.Size(864, 1197);
+            this.pnlResult.Size = new System.Drawing.Size(864, 1328);
             this.pnlResult.TabIndex = 8;
+            // 
+            // fixControl4
+            // 
+            this.fixControl4.BackColor = System.Drawing.SystemColors.Info;
+            this.fixControl4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.fixControl4.Description = "This will find managed assets that have been modified and you would like to embed" +
+    " in the solution";
+            this.fixControl4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.fixControl4.Location = new System.Drawing.Point(10, 1726);
+            this.fixControl4.Name = "fixControl4";
+            this.fixControl4.Padding = new System.Windows.Forms.Padding(10);
+            this.fixControl4.Size = new System.Drawing.Size(818, 228);
+            this.fixControl4.TabIndex = 12;
+            this.fixControl4.Title = "Add managed assets that were updated";
+            this.fixControl4.Apply += new System.EventHandler(this.fixControl_Apply);
+            // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(10, 1716);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(818, 10);
+            this.panel1.TabIndex = 11;
             // 
             // pnlSeparator1
             // 
@@ -255,23 +285,23 @@
             // 
             // rdbSimulate
             // 
+            this.rdbSimulate.Checked = true;
             this.rdbSimulate.Dock = System.Windows.Forms.DockStyle.Left;
             this.rdbSimulate.Location = new System.Drawing.Point(171, 0);
             this.rdbSimulate.Name = "rdbSimulate";
             this.rdbSimulate.Size = new System.Drawing.Size(307, 56);
             this.rdbSimulate.TabIndex = 2;
+            this.rdbSimulate.TabStop = true;
             this.rdbSimulate.Text = "Simulation (nothing will be updated)";
             this.rdbSimulate.UseVisualStyleBackColor = true;
             // 
             // rdbRealAction
             // 
-            this.rdbRealAction.Checked = true;
             this.rdbRealAction.Dock = System.Windows.Forms.DockStyle.Left;
             this.rdbRealAction.Location = new System.Drawing.Point(68, 0);
             this.rdbRealAction.Name = "rdbRealAction";
             this.rdbRealAction.Size = new System.Drawing.Size(103, 56);
             this.rdbRealAction.TabIndex = 1;
-            this.rdbRealAction.TabStop = true;
             this.rdbRealAction.Text = "Update";
             this.rdbRealAction.UseVisualStyleBackColor = true;
             // 
@@ -293,8 +323,8 @@
             this.Controls.Add(this.pnlResult);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "PluginControl";
-            this.Size = new System.Drawing.Size(1942, 1197);
-            this.Load += new System.EventHandler(this.MyPluginControl_Load);
+            this.Size = new System.Drawing.Size(2009, 1328);
+            this.Resize += new System.EventHandler(this.PluginControl_Resize);
             this.scSolutions.Panel1.ResumeLayout(false);
             this.scSolutions.Panel1.PerformLayout();
             this.scSolutions.Panel2.ResumeLayout(false);
@@ -311,6 +341,8 @@
             this.ResumeLayout(false);
 
         }
+
+     
 
         #endregion
         private System.Windows.Forms.SplitContainer scSolutions;
@@ -332,5 +364,7 @@
         private System.Windows.Forms.Label lblSimulation;
         private System.Windows.Forms.Panel pnlSeparator1;
         private System.Windows.Forms.Panel pnlSeparator2;
+        private UserControls.FixControl fixControl4;
+        private System.Windows.Forms.Panel panel1;
     }
 }

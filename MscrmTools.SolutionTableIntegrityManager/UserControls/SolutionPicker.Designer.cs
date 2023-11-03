@@ -82,6 +82,7 @@
             this.lvSolutions.TabIndex = 0;
             this.lvSolutions.UseCompatibleStateImageBehavior = false;
             this.lvSolutions.View = System.Windows.Forms.View.Details;
+            this.lvSolutions.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvSolutions_ColumnClick);
             this.lvSolutions.SelectedIndexChanged += new System.EventHandler(this.lvSolutions_SelectedIndexChanged);
             // 
             // chName

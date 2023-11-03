@@ -13,6 +13,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
 {
     public partial class TablePicker : UserControl
     {
+        private int orderColumn = -1;
         private List<Table> tables = new List<Table>();
 
         public TablePicker()
@@ -85,6 +86,11 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             }
         }
 
+        internal void Clear()
+        {
+            lvSolutions.Items.Clear();
+        }
+
         private string GetReason(int componentBehavior, Microsoft.Xrm.Sdk.Metadata.EntityMetadata metadata)
         {
             if (componentBehavior == 0 && metadata.IsManaged.Value)
@@ -101,9 +107,11 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             }
         }
 
-        internal void Clear()
+        private void lvSolutions_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            lvSolutions.Items.Clear();
+            if (orderColumn != e.Column) lvSolutions.Sorting = SortOrder.Ascending;
+            else lvSolutions.Sorting = lvSolutions.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+            lvSolutions.ListViewItemSorter = new ListViewItemComparer(e.Column, lvSolutions.Sorting);
         }
 
         private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -129,6 +137,13 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             else if (e.ClickedItem == tsbShowOnlyFaulty)
             {
                 DisplayTables(true);
+            }
+            else if (e.ClickedItem == tsbCheckManagedTables)
+            {
+                foreach (ListViewItem item in lvSolutions.Items)
+                {
+                    item.Checked = ((Table)item.Tag).Metadata.IsManaged.Value;
+                }
             }
         }
     }
