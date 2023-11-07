@@ -138,7 +138,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
                 AddComponent(solutionUniqueName, 2, id, false);
             }
 
-            var rels2 = emd.ManyToManyRelationships.Where(a => a.IsManaged.Value == true);
+            var rels2 = emd.ManyToOneRelationships.Where(a => a.IsManaged.Value);
             Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed Many-To-One relationships", 0);
             var rel2Ids = searchService.GetActiveLayers(rels2.Select(a => a.MetadataId.Value).ToList(), Worker, "Relationship");
 
@@ -146,11 +146,11 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             {
                 if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == id) != null) continue;
 
-                Log(emd, "Many-To-One relationship", id, rels2.First(a => a.MetadataId.Value == id).SchemaName, 3, $"{(isSimulation ? "Should add" : "Adding")} Many-To-One relationship {rels2.First(r => r.MetadataId.Value == id).SchemaName} to solution {solutionUniqueName}", 3, rel2Ids[id]);
-                AddComponent(solutionUniqueName, 3, id, false);
+                Log(emd, "Many-To-One relationship", id, rels2.First(a => a.MetadataId.Value == id).SchemaName, 10, $"{(isSimulation ? "Should add" : "Adding")} Many-To-One relationship {rels2.First(r => r.MetadataId.Value == id).SchemaName} to solution {solutionUniqueName}", 3, rel2Ids[id]);
+                AddComponent(solutionUniqueName, 10, id, false);
             }
 
-            var rels3 = emd.ManyToManyRelationships.Where(a => a.IsManaged.Value == true);
+            var rels3 = emd.ManyToManyRelationships.Where(a => a.IsManaged.Value);
             Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed Many-To-Many relationships", 0);
             var rel3Ids = searchService.GetActiveLayers(rels2.Select(a => a.MetadataId.Value).ToList(), Worker, "Relationship");
 
@@ -158,12 +158,12 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             {
                 if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == id) != null) continue;
 
-                Log(emd, "Many-To-Many relationship", id, rels3.First(a => a.MetadataId.Value == id).SchemaName, 3, $"{(isSimulation ? "Should add" : "Adding")} Many-To-Many relationship {rels3.First(r => r.MetadataId.Value == id).SchemaName} to solution {solutionUniqueName}", 3, rel3Ids[id]);
+                Log(emd, "Many-To-Many relationship", id, rels3.First(a => a.MetadataId.Value == id).SchemaName, 3, $"{(isSimulation ? "Should add" : "Adding")} Many-To-Many relationship {rels3.First(r => r.MetadataId.Value == id).SchemaName} to solution {solutionUniqueName}", 10, rel3Ids[id]);
 
-                AddComponent(solutionUniqueName, 3, id, false);
+                AddComponent(solutionUniqueName, 10, id, false);
             }
 
-            var keys = emd.Keys.Where(a => a.IsManaged.Value == true);
+            var keys = emd.Keys.Where(a => a.IsManaged.Value);
             Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed keys", 0);
             var keysIds = searchService.GetActiveLayers(keys.Select(a => a.MetadataId.Value).ToList(), Worker, "EntityKey");
 
@@ -312,16 +312,16 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
                 AddComponent(solutionUniqueName, 2, amd.MetadataId.Value, false);
             }
 
-            foreach (var rmd2 in emd.ManyToManyRelationships.Where(a => a.IsManaged.Value == false))
+            foreach (var rmd2 in emd.ManyToOneRelationships.Where(a => a.IsManaged.Value == false))
             {
-                Log(emd, "Many-To-One relationship", rmd2.MetadataId.Value, rmd2.SchemaName, 3, $"{(isSimulation ? "Should add" : "Adding")} Many-To-One relationship {rmd2.SchemaName} to solution {solutionUniqueName}", 3);
-                AddComponent(solutionUniqueName, 3, rmd2.MetadataId.Value, false);
+                Log(emd, "Many-To-One relationship", rmd2.MetadataId.Value, rmd2.SchemaName, 10, $"{(isSimulation ? "Should add" : "Adding")} Many-To-One relationship {rmd2.SchemaName} to solution {solutionUniqueName}", 3);
+                AddComponent(solutionUniqueName, 10, rmd2.MetadataId.Value, false);
             }
 
             foreach (var mmrmd in emd.ManyToManyRelationships.Where(a => a.IsManaged.Value == false))
             {
-                Log(emd, "Many-To-Many relationship", mmrmd.MetadataId.Value, mmrmd.SchemaName, 3, $"{(isSimulation ? "Should add" : "Adding")} Many-To-Many relationship {mmrmd.SchemaName} to solution {solutionUniqueName}", 3);
-                AddComponent(solutionUniqueName, 3, mmrmd.MetadataId.Value, false);
+                Log(emd, "Many-To-Many relationship", mmrmd.MetadataId.Value, mmrmd.SchemaName, 10, $"{(isSimulation ? "Should add" : "Adding")} Many-To-Many relationship {mmrmd.SchemaName} to solution {solutionUniqueName}", 3);
+                AddComponent(solutionUniqueName, 10, mmrmd.MetadataId.Value, false);
             }
 
             foreach (var kmd in emd.Keys.Where(a => a.IsManaged.Value == false))
