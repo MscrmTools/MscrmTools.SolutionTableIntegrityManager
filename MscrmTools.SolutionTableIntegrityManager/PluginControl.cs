@@ -107,14 +107,15 @@ namespace MscrmTools.SolutionTableIntegrityManager
                         return;
                     }
 
-                    if (!isSimulation) { 
+                    if (!isSimulation)
+                    {
                         solutionPicker1_SolutionSelected(solutionPicker1, new UserControls.SolutionSelectedEventArgs(solutionPicker1.SelectedSolution));
                     }
 
                     if (isSimulation && sender == fixControl2 || sender == fixControl4)
                     {
                         progressControl1.SetSelectiveApplierButtonVisibility(true);
-                        progressControl1.FixSender = fixControl2;
+                        progressControl1.FixSender = (FixControl)sender;
                         MessageBox.Show(this, "You can now review the logs and apply the update for all assets detected or you can select only the one you want to add in your solution.", "Simulation finished!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
