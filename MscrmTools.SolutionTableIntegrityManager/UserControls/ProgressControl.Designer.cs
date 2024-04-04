@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProgressControl));
             this.pnlFooter = new System.Windows.Forms.Panel();
+            this.btnOpenSelectiveApplier = new System.Windows.Forms.Button();
             this.btnExportLogs = new System.Windows.Forms.Button();
             this.btnClearLogs = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
@@ -39,9 +40,8 @@
             this.chType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chComponent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.chChangedProperties = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btnOpenSelectiveApplier = new System.Windows.Forms.Button();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pnlFooter.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,6 +57,18 @@
             this.pnlFooter.Padding = new System.Windows.Forms.Padding(10);
             this.pnlFooter.Size = new System.Drawing.Size(1343, 51);
             this.pnlFooter.TabIndex = 1;
+            // 
+            // btnOpenSelectiveApplier
+            // 
+            this.btnOpenSelectiveApplier.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnOpenSelectiveApplier.Location = new System.Drawing.Point(10, 10);
+            this.btnOpenSelectiveApplier.Name = "btnOpenSelectiveApplier";
+            this.btnOpenSelectiveApplier.Size = new System.Drawing.Size(324, 31);
+            this.btnOpenSelectiveApplier.TabIndex = 4;
+            this.btnOpenSelectiveApplier.Text = "Select items to add to your solution";
+            this.btnOpenSelectiveApplier.UseVisualStyleBackColor = true;
+            this.btnOpenSelectiveApplier.Visible = false;
+            this.btnOpenSelectiveApplier.Click += new System.EventHandler(this.btnOpenSelectiveApplier_Click);
             // 
             // btnExportLogs
             // 
@@ -129,6 +141,11 @@
             this.chMessage.Text = "Message";
             this.chMessage.Width = 400;
             // 
+            // chChangedProperties
+            // 
+            this.chChangedProperties.Text = "Changed properties";
+            this.chChangedProperties.Width = 150;
+            // 
             // imageList1
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -145,23 +162,6 @@
             this.imageList1.Images.SetKeyName(9, "loop.png");
             this.imageList1.Images.SetKeyName(10, "button.png");
             // 
-            // chChangedProperties
-            // 
-            this.chChangedProperties.Text = "Changed properties";
-            this.chChangedProperties.Width = 150;
-            // 
-            // btnOpenSelectiveApplier
-            // 
-            this.btnOpenSelectiveApplier.Dock = System.Windows.Forms.DockStyle.Left;
-            this.btnOpenSelectiveApplier.Location = new System.Drawing.Point(10, 10);
-            this.btnOpenSelectiveApplier.Name = "btnOpenSelectiveApplier";
-            this.btnOpenSelectiveApplier.Size = new System.Drawing.Size(324, 31);
-            this.btnOpenSelectiveApplier.TabIndex = 4;
-            this.btnOpenSelectiveApplier.Text = "Select items to add to your solution";
-            this.btnOpenSelectiveApplier.UseVisualStyleBackColor = true;
-            this.btnOpenSelectiveApplier.Visible = false;
-            this.btnOpenSelectiveApplier.Click += new System.EventHandler(this.btnOpenSelectiveApplier_Click);
-            // 
             // ProgressControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -171,6 +171,7 @@
             this.Name = "ProgressControl";
             this.Padding = new System.Windows.Forms.Padding(10);
             this.Size = new System.Drawing.Size(1363, 614);
+            this.Load += new System.EventHandler(this.ProgressControl_Load);
             this.pnlFooter.ResumeLayout(false);
             this.ResumeLayout(false);
 

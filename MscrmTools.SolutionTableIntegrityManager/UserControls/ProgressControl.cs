@@ -40,9 +40,18 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             item.EnsureVisible();
         }
 
+        public void ApplyText()
+        {
+            if (FixSender.Name == "fixControl6")
+            {
+                btnOpenSelectiveApplier.Text = "Select items to remove from your solution";
+            }
+        }
+
         public void SetSelectiveApplierButtonVisibility(bool isVisible)
         {
             btnOpenSelectiveApplier.Visible = isVisible;
+            ApplyText();
         }
 
         internal void Clear()
@@ -90,7 +99,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
 
         private void btnOpenSelectiveApplier_Click(object sender, EventArgs e)
         {
-            var ctrl = new SelectiveApplier(lvLogs.Items.Cast<ListViewItem>().Where(i => ((TableLog)i.Tag).Type != "Information" && ((TableLog)i.Tag).ChangedProperties?.Length > 0).Select(i => (TableLog)i.Tag).ToList(), FixSender.Name == "fixControl2");
+            var ctrl = new SelectiveApplier(lvLogs.Items.Cast<ListViewItem>().Where(i => ((TableLog)i.Tag).Type != "Information" && (((TableLog)i.Tag).ChangedProperties?.Length > 0 && FixSender.Name == "fixControl2" || FixSender.Name != "fixControl2")).Select(i => (TableLog)i.Tag).ToList(), FixSender.Name == "fixControl2", FixSender.Name == "fixControl6");
             ctrl.Name = "selectiveApplier1";
             ctrl.OnClose += (s, evt) => { Controls.Remove(ctrl); ctrl.Dispose(); };
             ctrl.OnApply += (s, evt) =>
@@ -104,6 +113,11 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
 
             parent.Controls.Add(ctrl);
             ctrl.BringToFront();
+        }
+
+        private void ProgressControl_Load(object sender, EventArgs e)
+        {
+            ApplyText();
         }
     }
 }

@@ -23,6 +23,8 @@ namespace MscrmTools.SolutionTableIntegrityManager
             fixControl2.Height = 150;
             fixControl3.Height = 150;
             fixControl4.Height = 150;
+            fixControl5.Height = 150;
+            fixControl6.Height = 150;
             progressControl1.CloseRequested += (sender, e) => { scMain.Panel2Collapsed = true; };
         }
 
@@ -50,9 +52,9 @@ namespace MscrmTools.SolutionTableIntegrityManager
             var correctTables = tablePicker1.SelectedTables.Where(t => t.IsBestPractice).Select(t => t.Metadata).ToList();
             var isSimulation = rdbSimulate.Checked;
 
-            if (tables.Count == 0 && sender != fixControl4 || correctTables.Count == 0 && sender == fixControl4)
+            if (tables.Count == 0 && sender != fixControl4 && sender != fixControl5 && sender != fixControl6 || correctTables.Count == 0 && (sender == fixControl4 || sender == fixControl5 || sender == fixControl6))
             {
-                MessageBox.Show(this, "Please check tables that need to be fixed", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "Please check tables that need to be fixed\n\nFix 1 to 3 can only be used with faulty tables. Other actions can be used only with non faulty tables.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -64,6 +66,7 @@ namespace MscrmTools.SolutionTableIntegrityManager
                 }
             }
 
+            progressControl1.FixSender = (FixControl)sender;
             progressControl1.SetSelectiveApplierButtonVisibility(false);
             progressControl1.Clear();
             scMain.Panel2Collapsed = false;
@@ -92,6 +95,14 @@ namespace MscrmTools.SolutionTableIntegrityManager
                     {
                         tc.Clean(solution, correctTables, false, true, true, true);
                     }
+                    else if (sender == fixControl5)
+                    {
+                        tc.Clean(solution, correctTables, true, false, true, true);
+                    }
+                    else if (sender == fixControl6)
+                    {
+                        tc.RemoveUnchangedAssets(solution, correctTables);
+                    }
                 },
                 ProgressChanged = evt =>
                 {
@@ -112,11 +123,17 @@ namespace MscrmTools.SolutionTableIntegrityManager
                         solutionPicker1_SolutionSelected(solutionPicker1, new UserControls.SolutionSelectedEventArgs(solutionPicker1.SelectedSolution));
                     }
 
-                    if (isSimulation && sender == fixControl2 || sender == fixControl4)
+                    if (isSimulation && sender == fixControl2 || sender == fixControl4 || sender == fixControl5)
                     {
                         progressControl1.SetSelectiveApplierButtonVisibility(true);
                         progressControl1.FixSender = (FixControl)sender;
                         MessageBox.Show(this, "You can now review the logs and apply the update for all assets detected or you can select only the one you want to add in your solution.", "Simulation finished!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else if (sender == fixControl6)
+                    {
+                        progressControl1.SetSelectiveApplierButtonVisibility(true);
+                        progressControl1.FixSender = (FixControl)sender;
+                        MessageBox.Show(this, "You can now review the logs and apply the update for all assets detected or you can select only the one you want to remove from your solution.", "Simulation finished!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
@@ -187,7 +204,12 @@ namespace MscrmTools.SolutionTableIntegrityManager
                 return;
             }
 
-            if (DialogResult.No == MessageBox.Show(this, "Are you sure you want to add the selected assets to the solution?\n\nTHIS IS NOT A SIMULATION", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            if (e.IsFromFix2 && DialogResult.No == MessageBox.Show(this, "Are you sure you want to add the selected assets to the solution?\n\nTHIS IS NOT A SIMULATION", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            {
+                return;
+            }
+
+            if (e.IsFromFix6 && DialogResult.No == MessageBox.Show(this, "Are you sure you want to remove the selected assets from the solution?\n\nTHIS IS NOT A SIMULATION", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
             {
                 return;
             }
@@ -204,7 +226,15 @@ namespace MscrmTools.SolutionTableIntegrityManager
                 {
                     var tc = new TableCleaner(Service, false);
                     tc.Worker = worker;
-                    tc.AddSelectedComponents(e.Items, solution, e.IsFromFix2);
+
+                    if (e.IsFromFix6)
+                    {
+                        tc.RemoveSelectedComponents(e.Items, solution);
+                    }
+                    else
+                    {
+                        tc.AddSelectedComponents(e.Items, solution, e.IsFromFix2);
+                    }
                 },
                 ProgressChanged = evt =>
                 {
@@ -234,6 +264,8 @@ namespace MscrmTools.SolutionTableIntegrityManager
             fixControl2.Enabled = !isWorking;
             fixControl3.Enabled = !isWorking;
             fixControl4.Enabled = !isWorking;
+            fixControl5.Enabled = !isWorking;
+            fixControl6.Enabled = !isWorking;
         }
 
         private void solutionPicker1_SolutionSelected(object sender, UserControls.SolutionSelectedEventArgs e)
@@ -262,22 +294,21 @@ namespace MscrmTools.SolutionTableIntegrityManager
                     {
                         badPracticeControl1.Visible = true;
                         goodPracticeControl2.Visible = false;
-                        fixControl1.Visible = true;
-                        fixControl2.Visible = true;
-                        fixControl3.Visible = true;
-                        fixControl4.Visible = false;
                         pnlMode.Visible = true;
                     }
                     else
                     {
                         badPracticeControl1.Visible = false;
                         goodPracticeControl2.Visible = true;
-                        fixControl1.Visible = false;
-                        fixControl2.Visible = false;
-                        fixControl3.Visible = false;
-                        fixControl4.Visible = true;
                         pnlMode.Visible = true;
                     }
+
+                    fixControl1.Visible = tablePicker1.HasBadPracticeTables;
+                    fixControl2.Visible = tablePicker1.HasBadPracticeTables;
+                    fixControl3.Visible = tablePicker1.HasBadPracticeTables;
+                    fixControl4.Visible = tablePicker1.HasGoodPracticeTables;
+                    fixControl5.Visible = tablePicker1.HasGoodPracticeTables;
+                    fixControl6.Visible = tablePicker1.HasGoodPracticeTables;
 
                     pnlResult.Visible = true;
                 }

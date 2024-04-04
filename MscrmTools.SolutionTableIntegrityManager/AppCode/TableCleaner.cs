@@ -54,7 +54,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
 
                     if (addUnmanaged)
                     {
-                        AddUnmanagedComponents(emdFull, solutionUniqueName);
+                        AddUnmanagedComponents(emdFull, solutionUniqueName, addOnlyManagedNotPresent);
                     }
 
                     if (addChangedManaged)
@@ -87,6 +87,199 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             }
 
             Log(null, "Information", Guid.Empty, "", -1, "Process completed!", 0);
+        }
+
+        internal void RemoveSelectedComponents(List<TableLog> items, string solutionUniqueName)
+        {
+            foreach (var component in items)
+            {
+                Log(component.EntityMetadata, component.Type, component.ComponentId, component.ComponentName, component.TypeCode, $"{(isSimulation ? "Should remove" : "Removing")} {component.Type} {component.ComponentName} from solution {solutionUniqueName}", component.GetImageIndex());
+                RemoveComponentFromSolution(component.ComponentId, component.TypeCode, solutionUniqueName);
+            }
+
+            Log(null, "Information", Guid.Empty, "", -1, "Process completed!", 0);
+        }
+
+        internal void RemoveUnchangedAssets(string solutionUniqueName, List<EntityMetadata> tables)
+        {
+            List<Entity> components = service.RetrieveMultiple(new QueryExpression("solutioncomponent")
+            {
+                ColumnSet = new ColumnSet("objectid", "componenttype"),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                            {
+                                new ConditionExpression("componenttype", ConditionOperator.In, new int[]{2,3,10,14,60,26,59,29,commandTypeCode })
+                            }
+                },
+                LinkEntities =
+                        {
+                            new LinkEntity
+                            {
+                                LinkFromEntityName = "solutioncomponent",
+                                LinkFromAttributeName = "solutionid",
+                                LinkToAttributeName = "solutionid",
+                                LinkToEntityName = "solution",
+                                LinkCriteria = new FilterExpression
+                                {
+                                    Conditions =
+                                    {
+                                        new ConditionExpression("uniquename", ConditionOperator.Equal, solutionUniqueName)
+                                    }
+                                }
+                            }
+                        }
+            }
+                    ).Entities.ToList();
+
+            foreach (var table in tables)
+            {
+                var emd = GetTableMetadata(table.MetadataId.Value);
+
+                var attributes = emd.Attributes.Where(a => a.IsManaged.Value);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed attributes", 0);
+                var ids = searchService.GetActiveLayers(attributes.Select(a => a.MetadataId.Value).ToList(), Worker, "Attribute");
+
+                foreach (var attrComponent in components
+                        .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 2)
+                        .Where(c => ids.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var amd = attributes.FirstOrDefault(a => a.MetadataId.Value == attrComponent.GetAttributeValue<Guid>("objectid"));
+                    if (amd == null) continue;
+
+                    Log(emd, "Attribute", amd.MetadataId.Value, amd.DisplayName?.UserLocalizedLabel?.Label ?? "N/A", 2, $"{(isSimulation ? "Should remove" : "Removing")} attribute {amd.SchemaName} from solution {solutionUniqueName}", 2);
+                    RemoveComponentFromSolution(amd.MetadataId.Value, 2, solutionUniqueName);
+                }
+
+                var rels2 = emd.ManyToOneRelationships.Where(a => a.IsManaged.Value);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed Many-To-One relationships", 0);
+                var rel2Ids = searchService.GetActiveLayers(rels2.Select(a => a.MetadataId.Value).ToList(), Worker, "Relationship");
+
+                foreach (var component in components
+                        .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 10)
+                        .Where(c => rel2Ids.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var md = rels2.FirstOrDefault(a => a.MetadataId.Value == component.GetAttributeValue<Guid>("objectid"));
+                    if (md == null) continue;
+
+                    Log(emd, "Many-To-One relationship", md.MetadataId.Value, md.SchemaName, 10, $"{(isSimulation ? "Should remove" : "Removing")} Many-To-One relationship {md.SchemaName} from solution {solutionUniqueName}", 3);
+                    RemoveComponentFromSolution(md.MetadataId.Value, 10, solutionUniqueName);
+                }
+
+                var rels3 = emd.ManyToManyRelationships.Where(a => a.IsManaged.Value);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed Many-To-Many relationships", 0);
+                var rel3Ids = searchService.GetActiveLayers(rels2.Select(a => a.MetadataId.Value).ToList(), Worker, "Relationship");
+
+                foreach (var component in components
+                        .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 10)
+                        .Where(c => rel3Ids.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var md = rels3.FirstOrDefault(a => a.MetadataId.Value == component.GetAttributeValue<Guid>("objectid"));
+                    if (md == null) continue;
+
+                    Log(emd, "Many-To-Many relationship", md.MetadataId.Value, md.SchemaName, 10, $"{(isSimulation ? "Should remove" : "Removing")} Many-To-Many relationship {md.SchemaName} from solution {solutionUniqueName}", 10);
+                    RemoveComponentFromSolution(md.MetadataId.Value, 10, solutionUniqueName);
+                }
+
+                var keys = emd.Keys.Where(a => a.IsManaged.Value);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed keys", 0);
+                var keysIds = searchService.GetActiveLayers(keys.Select(a => a.MetadataId.Value).ToList(), Worker, "EntityKey");
+
+                foreach (var component in components
+                       .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 14)
+                       .Where(c => keysIds.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var md = keys.FirstOrDefault(a => a.MetadataId.Value == component.GetAttributeValue<Guid>("objectid"));
+                    if (md == null) continue;
+
+                    Log(emd, "Key", md.MetadataId.Value, md.DisplayName?.UserLocalizedLabel?.Label ?? "N/A", 14, $"{(isSimulation ? "Should remove" : "Removing")} Key {md.SchemaName} from solution {solutionUniqueName}", 4);
+                    RemoveComponentFromSolution(md.MetadataId.Value, 14, solutionUniqueName);
+                }
+
+                var forms = GetForms(emd.LogicalName, true, false);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed forms", 0);
+                var formsIds = searchService.GetActiveLayers(forms.Select(a => a.Id).ToList(), Worker, "SystemForm");
+
+                foreach (var component in components
+                       .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 60)
+                       .Where(c => formsIds.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var form = forms.FirstOrDefault(f => f.Id == component.GetAttributeValue<Guid>("objectid"));
+                    if (form == null) continue;
+                    Log(emd, "Form", form.Id, form.GetAttributeValue<string>("name"), 60, $"{(isSimulation ? "Should remove" : "Removing")} form {form.GetAttributeValue<string>("name")} from solution {solutionUniqueName}", 5);
+                    RemoveComponentFromSolution(form.Id, 60, solutionUniqueName);
+                }
+
+                forms = GetForms(emd.LogicalName, true, true);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed dashboards", 0);
+                var dashboardsIds = searchService.GetActiveLayers(forms.Select(a => a.Id).ToList(), Worker, "SystemForm");
+
+                foreach (var component in components
+                       .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 60)
+                       .Where(c => dashboardsIds.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var form = forms.FirstOrDefault(f => f.Id == component.GetAttributeValue<Guid>("objectid"));
+                    if (form == null) continue;
+                    Log(emd, "Form", form.Id, form.GetAttributeValue<string>("name"), 60, $"{(isSimulation ? "Should remove" : "Removing")} dashboard {form.GetAttributeValue<string>("name")} from solution {solutionUniqueName}", 6);
+                    RemoveComponentFromSolution(form.Id, 60, solutionUniqueName);
+                }
+
+                var views = GetViews(emd.LogicalName, true);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed views", 0);
+                var viewsIds = searchService.GetActiveLayers(views.Select(a => a.Id).ToList(), Worker, "SavedQuery");
+
+                foreach (var component in components
+                     .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 26)
+                     .Where(c => viewsIds.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var view = views.FirstOrDefault(f => f.Id == component.GetAttributeValue<Guid>("objectid"));
+                    if (view == null) continue;
+                    Log(emd, "Form", view.Id, view.GetAttributeValue<string>("name"), 26, $"{(isSimulation ? "Should remove" : "Removing")} view {view.GetAttributeValue<string>("name")} from solution {solutionUniqueName}", 7);
+                    RemoveComponentFromSolution(view.Id, 26, solutionUniqueName);
+                }
+
+                var charts = GetCharts(emd.LogicalName, true);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed charts", 0);
+                var chartsIds = searchService.GetActiveLayers(charts.Select(a => a.Id).ToList(), Worker, "SavedQueryVisualization");
+
+                foreach (var component in components
+                    .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 59)
+                    .Where(c => chartsIds.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var chart = charts.FirstOrDefault(f => f.Id == component.GetAttributeValue<Guid>("objectid"));
+                    if (chart == null) continue;
+                    Log(emd, "Form", chart.Id, chart.GetAttributeValue<string>("name"), 59, $"{(isSimulation ? "Should remove" : "Removing")} chart {chart.GetAttributeValue<string>("name")} from solution {solutionUniqueName}", 8);
+                    RemoveComponentFromSolution(chart.Id, 59, solutionUniqueName);
+                }
+
+                var businessRules = GetBusinessRules(emd.LogicalName, true);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed business rules", 0);
+                var businessRulesIds = searchService.GetActiveLayers(businessRules.Select(a => a.Id).ToList(), Worker, "Workflow");
+
+                foreach (var component in components
+                    .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == 29)
+                    .Where(c => businessRulesIds.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var br = businessRules.FirstOrDefault(f => f.Id == component.GetAttributeValue<Guid>("objectid"));
+                    if (br == null) continue;
+                    Log(emd, "Form", br.Id, br.GetAttributeValue<string>("name"), 29, $"{(isSimulation ? "Should remove" : "Removing")} business rule {br.GetAttributeValue<string>("name")} from solution {solutionUniqueName}", 9);
+                    RemoveComponentFromSolution(br.Id, 29, solutionUniqueName);
+                }
+
+                var commands = GetCommands(emd.MetadataId.Value, true);
+                Log(emd, "Information", Guid.Empty, "", -1, "Searching for changes for managed commands", 0);
+                var commandsIds = searchService.GetActiveLayers(commands.Select(a => a.Id).ToList(), Worker, "appaction");
+
+                foreach (var component in components
+                  .Where(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value == commandTypeCode)
+                  .Where(c => commandsIds.All(id => id.Key != c.GetAttributeValue<Guid>("objectid"))))
+                {
+                    var command = commands.FirstOrDefault(f => f.Id == component.GetAttributeValue<Guid>("objectid"));
+                    if (command == null) continue;
+                    Log(emd, "Form", command.Id, command.GetAttributeValue<string>("name"), commandTypeCode, $"{(isSimulation ? "Should remove" : "Removing")} business rule {command.GetAttributeValue<string>("name")} from solution {solutionUniqueName}", 10);
+                    RemoveComponentFromSolution(command.Id, commandTypeCode, solutionUniqueName);
+                }
+            }
         }
 
         private void AddChangedManagedComponents(EntityMetadata emd, string solutionUniqueName, bool addOnlyNotPresent = false)
@@ -302,30 +495,70 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             }
         }
 
-        private void AddUnmanagedComponents(EntityMetadata emd, string solutionUniqueName)
+        private void AddUnmanagedComponents(EntityMetadata emd, string solutionUniqueName, bool addOnlyNotPresent = false)
         {
+            List<Entity> components = new List<Entity>();
+            if (addOnlyNotPresent)
+            {
+                components = service.RetrieveMultiple(
+                    new QueryExpression("solutioncomponent")
+                    {
+                        ColumnSet = new ColumnSet("objectid", "componenttype"),
+                        Criteria = new FilterExpression
+                        {
+                            Conditions =
+                            {
+                                new ConditionExpression("componenttype", ConditionOperator.In, new int[]{2,3,10,14,60,26,59,29,commandTypeCode })
+                            }
+                        },
+                        LinkEntities =
+                        {
+                            new LinkEntity
+                            {
+                                LinkFromEntityName = "solutioncomponent",
+                                LinkFromAttributeName = "solutionid",
+                                LinkToAttributeName = "solutionid",
+                                LinkToEntityName = "solution",
+                                LinkCriteria = new FilterExpression
+                                {
+                                    Conditions =
+                                    {
+                                        new ConditionExpression("uniquename", ConditionOperator.Equal,solutionUniqueName)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ).Entities.ToList();
+            }
+
             foreach (var amd in emd.Attributes.Where(a => a.IsManaged.Value == false))
             {
                 if (amd.AttributeOf != null && emd.Attributes.First(a => a.LogicalName == amd.AttributeOf).IsManaged.Value) continue;
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == amd.MetadataId.Value) != null) continue;
 
-                Log(emd, "Attribute", amd.MetadataId.Value, amd.DisplayName?.UserLocalizedLabel?.Label ?? "N/A", 2, $"{(isSimulation ? "Should add" : "Adding")} attribute {amd.SchemaName} to solution {solutionUniqueName}", 2);
+                Log(emd, "Attribute", amd.MetadataId.Value, amd.DisplayName?.UserLocalizedLabel?.Label ?? amd.SchemaName, 2, $"{(isSimulation ? "Should add" : "Adding")} attribute {amd.SchemaName} to solution {solutionUniqueName}", 2);
                 AddComponent(solutionUniqueName, 2, amd.MetadataId.Value, false);
             }
 
             foreach (var rmd2 in emd.ManyToOneRelationships.Where(a => a.IsManaged.Value == false))
             {
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == rmd2.MetadataId.Value) != null) continue;
+
                 Log(emd, "Many-To-One relationship", rmd2.MetadataId.Value, rmd2.SchemaName, 10, $"{(isSimulation ? "Should add" : "Adding")} Many-To-One relationship {rmd2.SchemaName} to solution {solutionUniqueName}", 3);
                 AddComponent(solutionUniqueName, 10, rmd2.MetadataId.Value, false);
             }
 
             foreach (var mmrmd in emd.ManyToManyRelationships.Where(a => a.IsManaged.Value == false))
             {
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == mmrmd.MetadataId.Value) != null) continue;
                 Log(emd, "Many-To-Many relationship", mmrmd.MetadataId.Value, mmrmd.SchemaName, 10, $"{(isSimulation ? "Should add" : "Adding")} Many-To-Many relationship {mmrmd.SchemaName} to solution {solutionUniqueName}", 3);
                 AddComponent(solutionUniqueName, 10, mmrmd.MetadataId.Value, false);
             }
 
             foreach (var kmd in emd.Keys.Where(a => a.IsManaged.Value == false))
             {
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == kmd.MetadataId.Value) != null) continue;
                 Log(emd, "Key", kmd.MetadataId.Value, kmd.DisplayName?.UserLocalizedLabel?.Label ?? "N/A", 14, $"{(isSimulation ? "Should add" : "Adding")} Key {kmd.SchemaName} to solution {solutionUniqueName}", 4);
                 AddComponent(solutionUniqueName, 14, kmd.MetadataId.Value, false);
             }
@@ -333,6 +566,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             var forms = GetForms(emd.LogicalName, false, false);
             foreach (var form in forms)
             {
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == form.Id) != null) continue;
                 Log(emd, "Form", form.Id, form.GetAttributeValue<string>("name"), 60, $"{(isSimulation ? "Should add" : "Adding")} form {form.GetAttributeValue<string>("name")} to solution {solutionUniqueName}", 5);
                 AddComponent(solutionUniqueName, 60, form.Id, false);
             }
@@ -340,6 +574,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             forms = GetForms(emd.LogicalName, false, true);
             foreach (var form in forms)
             {
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == form.Id) != null) continue;
                 Log(emd, "Dashboard", form.Id, form.GetAttributeValue<string>("name"), 60, $"{(isSimulation ? "Should add" : "Adding")} dashboard {form.GetAttributeValue<string>("name")} to solution {solutionUniqueName}", 6);
                 AddComponent(solutionUniqueName, 60, form.Id, false);
             }
@@ -347,6 +582,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             var views = GetViews(emd.LogicalName, false);
             foreach (var view in views)
             {
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == view.Id) != null) continue;
                 Log(emd, "View", view.Id, view.GetAttributeValue<string>("name"), 26, $"{(isSimulation ? "Should add" : "Adding")} view {view.GetAttributeValue<string>("name")} to solution {solutionUniqueName}", 7);
                 AddComponent(solutionUniqueName, 26, view.Id, false);
             }
@@ -354,6 +590,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             var charts = GetCharts(emd.LogicalName, false);
             foreach (var chart in charts)
             {
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == chart.Id) != null) continue;
                 Log(emd, "Chart", chart.Id, chart.GetAttributeValue<string>("name"), 59, $"{(isSimulation ? "Should add" : "Adding")} chart {chart.GetAttributeValue<string>("name")} to solution {solutionUniqueName}", 8);
                 AddComponent(solutionUniqueName, 59, chart.Id, false);
             }
@@ -361,6 +598,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             var businessRules = GetBusinessRules(emd.LogicalName, false);
             foreach (var businessRule in businessRules)
             {
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == businessRule.Id) != null) continue;
                 Log(emd, "Business Rule", businessRule.Id, businessRule.GetAttributeValue<string>("name"), 29, $"{(isSimulation ? "Should add" : "Adding")} business rule {businessRule.GetAttributeValue<string>("name")} to solution {solutionUniqueName}", 9);
                 AddComponent(solutionUniqueName, 29, businessRule.Id, false);
             }
@@ -368,6 +606,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             var commands = GetCommands(emd.MetadataId.Value, false);
             foreach (var command in commands)
             {
+                if (components.FirstOrDefault(c => c.GetAttributeValue<Guid>("objectid") == command.Id) != null) continue;
                 Log(emd, "Command", command.Id, command.GetAttributeValue<string>("name"), commandTypeCode, $"{(isSimulation ? "Should add" : "Adding")} command {command.GetAttributeValue<string>("name")} to solution {solutionUniqueName}", 10);
                 AddComponent(solutionUniqueName, commandTypeCode, command.Id, false);
             }
@@ -530,19 +769,24 @@ namespace MscrmTools.SolutionTableIntegrityManager.AppCode
             OnLog?.Invoke(this, new TableCleanerProgressEventArgs { Log = log, ImageIndex = imageIndex });
         }
 
-        private void RemoveTableFromSolution(EntityMetadata emd, string solutionUniqueName)
+        private void RemoveComponentFromSolution(Guid componentId, int componentType, string solutionUniqueName)
         {
-            Log(emd, "Table", emd.MetadataId.Value, emd.DisplayName?.UserLocalizedLabel?.Label ?? "N/A", 1, $"Removing table {emd.SchemaName} from solution {solutionUniqueName}", 1);
-
             if (!isSimulation)
             {
                 service.Execute(new RemoveSolutionComponentRequest
                 {
                     SolutionUniqueName = solutionUniqueName,
-                    ComponentType = 1,
-                    ComponentId = emd.MetadataId.Value
+                    ComponentType = componentType,
+                    ComponentId = componentId
                 });
             }
+        }
+
+        private void RemoveTableFromSolution(EntityMetadata emd, string solutionUniqueName)
+        {
+            Log(emd, "Table", emd.MetadataId.Value, emd.DisplayName?.UserLocalizedLabel?.Label ?? "N/A", 1, $"Removing table {emd.SchemaName} from solution {solutionUniqueName}", 1);
+
+            RemoveComponentFromSolution(emd.MetadataId.Value, 1, solutionUniqueName);
         }
     }
 }

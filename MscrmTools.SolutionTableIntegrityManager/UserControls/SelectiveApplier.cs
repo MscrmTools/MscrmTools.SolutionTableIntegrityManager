@@ -14,25 +14,33 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
     {
         private int checkedCount = 0;
         private bool isFromFix2;
+        private bool isFromFix6;
         private List<TableLog> logs;
         private List<ListViewItem> lvItems;
         private int orderColumn = -1;
 
-        public SelectiveApplier(List<TableLog> logs, bool isFromFix2)
+        public SelectiveApplier(List<TableLog> logs, bool isFromFix2, bool isFromFix6)
         {
             InitializeComponent();
 
             this.logs = logs;
             this.isFromFix2 = isFromFix2;
+            this.isFromFix6 = isFromFix6;
             splitContainer1.SplitterDistance = 450;
             SetScintillatControl(scintilla1);
+
+            if (isFromFix6)
+            {
+                lblTitle.Text = "Check items you want to remove from your solution";
+                lblDesc.Text = "Check items you want to remove from in your solution and click on Apply button";
+            }
         }
 
         public event EventHandler<OnApplyFixEventArgs> OnApply;
 
         public event EventHandler OnClose;
 
-        public bool IsMaximized { get;set;}
+        public bool IsMaximized { get; set; }
 
         private static string JsonPrettify(string json)
         {
@@ -50,7 +58,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
 
         private void btnApply_Click(object sender, EventArgs e)
         {
-            OnApply?.Invoke(this, new OnApplyFixEventArgs { Items = lvItems.Where(i => i.Checked).Select(li => (TableLog)li.Tag).ToList(), IsFromFix2 = isFromFix2 });
+            OnApply?.Invoke(this, new OnApplyFixEventArgs { Items = lvItems.Where(i => i.Checked).Select(li => (TableLog)li.Tag).ToList(), IsFromFix2 = isFromFix2, IsFromFix6 = isFromFix6 });
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -75,7 +83,6 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
                 Height = Convert.ToInt32(Parent.Height * 0.7);
                 Location = new Point(Parent.Width / 2 - Width / 2, Parent.Height / 2 - Height / 2);
                 IsMaximized = false;
-
             }
         }
 
@@ -103,8 +110,15 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
                 return;
             }
 
-            scintilla1.Text = JsonPrettify(((TableLog)item.Tag).ChangedProperties);
-            splitContainer1.Panel2Collapsed = false;
+            if (!string.IsNullOrEmpty(((TableLog)item.Tag).ChangedProperties))
+            {
+                scintilla1.Text = JsonPrettify(((TableLog)item.Tag).ChangedProperties);
+                splitContainer1.Panel2Collapsed = false;
+            }
+            else
+            {
+                splitContainer1.Panel2Collapsed = true;
+            }
         }
 
         private void SelectiveApplier_Load(object sender, EventArgs e)
@@ -128,7 +142,6 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             Location = new Point(Parent.Width / 2 - Width / 2, Parent.Height / 2 - Height / 2);
 
             lvLogs.ItemChecked += new ItemCheckedEventHandler(lvLogs_ItemChecked);
-
         }
 
         private void SetScintillatControl(Scintilla ctrl)

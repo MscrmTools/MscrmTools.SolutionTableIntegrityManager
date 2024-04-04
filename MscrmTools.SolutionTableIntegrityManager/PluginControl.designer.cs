@@ -44,6 +44,10 @@ namespace MscrmTools.SolutionTableIntegrityManager
             this.scMain = new System.Windows.Forms.SplitContainer();
             this.progressControl1 = new MscrmTools.SolutionTableIntegrityManager.UserControls.ProgressControl();
             this.pnlResult = new System.Windows.Forms.Panel();
+            this.fixControl6 = new MscrmTools.SolutionTableIntegrityManager.UserControls.FixControl();
+            this.fixControl5 = new MscrmTools.SolutionTableIntegrityManager.UserControls.FixControl();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.fixControl4 = new MscrmTools.SolutionTableIntegrityManager.UserControls.FixControl();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pnlSeparator1 = new System.Windows.Forms.Panel();
@@ -62,6 +66,7 @@ namespace MscrmTools.SolutionTableIntegrityManager
             this.scMain.Panel2.SuspendLayout();
             this.scMain.SuspendLayout();
             this.pnlResult.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.pnlMode.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -79,8 +84,8 @@ namespace MscrmTools.SolutionTableIntegrityManager
             // scSolutions.Panel2
             // 
             this.scSolutions.Panel2.Controls.Add(this.tablePicker1);
-            this.scSolutions.Size = new System.Drawing.Size(1145, 1328);
-            this.scSolutions.SplitterDistance = 299;
+            this.scSolutions.Size = new System.Drawing.Size(1171, 1318);
+            this.scSolutions.SplitterDistance = 305;
             this.scSolutions.TabIndex = 5;
             // 
             // solutionPicker1
@@ -88,7 +93,7 @@ namespace MscrmTools.SolutionTableIntegrityManager
             this.solutionPicker1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.solutionPicker1.Location = new System.Drawing.Point(0, 34);
             this.solutionPicker1.Name = "solutionPicker1";
-            this.solutionPicker1.Size = new System.Drawing.Size(299, 1294);
+            this.solutionPicker1.Size = new System.Drawing.Size(305, 1284);
             this.solutionPicker1.TabIndex = 2;
             this.solutionPicker1.SolutionSelected += new System.EventHandler<MscrmTools.SolutionTableIntegrityManager.UserControls.SolutionSelectedEventArgs>(this.solutionPicker1_SolutionSelected);
             // 
@@ -99,7 +104,7 @@ namespace MscrmTools.SolutionTableIntegrityManager
             this.tsbLoadSolutions});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(299, 34);
+            this.toolStrip1.Size = new System.Drawing.Size(305, 34);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -116,7 +121,7 @@ namespace MscrmTools.SolutionTableIntegrityManager
             this.tablePicker1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tablePicker1.Location = new System.Drawing.Point(0, 0);
             this.tablePicker1.Name = "tablePicker1";
-            this.tablePicker1.Size = new System.Drawing.Size(842, 1328);
+            this.tablePicker1.Size = new System.Drawing.Size(862, 1318);
             this.tablePicker1.TabIndex = 0;
             // 
             // goodPracticeControl2
@@ -198,7 +203,7 @@ namespace MscrmTools.SolutionTableIntegrityManager
             // 
             this.scMain.Panel2.Controls.Add(this.progressControl1);
             this.scMain.Panel2Collapsed = true;
-            this.scMain.Size = new System.Drawing.Size(1145, 1328);
+            this.scMain.Size = new System.Drawing.Size(1171, 1318);
             this.scMain.SplitterDistance = 817;
             this.scMain.TabIndex = 6;
             // 
@@ -215,6 +220,10 @@ namespace MscrmTools.SolutionTableIntegrityManager
             // pnlResult
             // 
             this.pnlResult.AutoScroll = true;
+            this.pnlResult.Controls.Add(this.fixControl6);
+            this.pnlResult.Controls.Add(this.panel3);
+            this.pnlResult.Controls.Add(this.fixControl5);
+            this.pnlResult.Controls.Add(this.panel2);
             this.pnlResult.Controls.Add(this.fixControl4);
             this.pnlResult.Controls.Add(this.panel1);
             this.pnlResult.Controls.Add(this.fixControl3);
@@ -226,11 +235,55 @@ namespace MscrmTools.SolutionTableIntegrityManager
             this.pnlResult.Controls.Add(this.badPracticeControl1);
             this.pnlResult.Controls.Add(this.goodPracticeControl2);
             this.pnlResult.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlResult.Location = new System.Drawing.Point(1145, 0);
+            this.pnlResult.Location = new System.Drawing.Point(1171, 0);
             this.pnlResult.Name = "pnlResult";
             this.pnlResult.Padding = new System.Windows.Forms.Padding(10);
-            this.pnlResult.Size = new System.Drawing.Size(864, 1328);
+            this.pnlResult.Size = new System.Drawing.Size(864, 1318);
             this.pnlResult.TabIndex = 8;
+            // 
+            // fixControl6
+            // 
+            this.fixControl6.BackColor = System.Drawing.SystemColors.Info;
+            this.fixControl6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.fixControl6.Description = "This will find managed assets not updated and remove them from the solution";
+            this.fixControl6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.fixControl6.Location = new System.Drawing.Point(10, 2192);
+            this.fixControl6.Name = "fixControl6";
+            this.fixControl6.Padding = new System.Windows.Forms.Padding(10);
+            this.fixControl6.Size = new System.Drawing.Size(818, 228);
+            this.fixControl6.TabIndex = 15;
+            this.fixControl6.Title = "Remove unchanged managed assets";
+            this.fixControl6.Apply += new System.EventHandler(this.fixControl_Apply);
+            // 
+            // fixControl5
+            // 
+            this.fixControl5.BackColor = System.Drawing.SystemColors.Info;
+            this.fixControl5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.fixControl5.Description = "This will find unmanaged assets that are not already present in the solution";
+            this.fixControl5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.fixControl5.Location = new System.Drawing.Point(10, 1964);
+            this.fixControl5.Name = "fixControl5";
+            this.fixControl5.Padding = new System.Windows.Forms.Padding(10);
+            this.fixControl5.Size = new System.Drawing.Size(818, 228);
+            this.fixControl5.TabIndex = 14;
+            this.fixControl5.Title = "Add missing unmanaged assets";
+            this.fixControl5.Apply += new System.EventHandler(this.fixControl_Apply);
+            // 
+            // panel2
+            // 
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(10, 1954);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(818, 10);
+            this.panel2.TabIndex = 13;
+            // 
+            // panel3
+            // 
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel3.Location = new System.Drawing.Point(0, 0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(818, 10);
+            this.panel3.TabIndex = 14;
             // 
             // fixControl4
             // 
@@ -323,7 +376,7 @@ namespace MscrmTools.SolutionTableIntegrityManager
             this.Controls.Add(this.pnlResult);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "PluginControl";
-            this.Size = new System.Drawing.Size(2009, 1328);
+            this.Size = new System.Drawing.Size(2035, 1318);
             this.Resize += new System.EventHandler(this.PluginControl_Resize);
             this.scSolutions.Panel1.ResumeLayout(false);
             this.scSolutions.Panel1.PerformLayout();
@@ -337,6 +390,7 @@ namespace MscrmTools.SolutionTableIntegrityManager
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).EndInit();
             this.scMain.ResumeLayout(false);
             this.pnlResult.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.pnlMode.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -366,5 +420,9 @@ namespace MscrmTools.SolutionTableIntegrityManager
         private System.Windows.Forms.Panel pnlSeparator2;
         private UserControls.FixControl fixControl4;
         private System.Windows.Forms.Panel panel1;
+        private UserControls.FixControl fixControl5;
+        private System.Windows.Forms.Panel panel2;
+        private UserControls.FixControl fixControl6;
+        private System.Windows.Forms.Panel panel3;
     }
 }

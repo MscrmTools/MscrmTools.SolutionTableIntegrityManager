@@ -22,6 +22,7 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
         }
 
         public bool HasBadPracticeTables => tables.Any(t => !t.IsBestPractice);
+        public bool HasGoodPracticeTables => tables.Any(t => t.IsBestPractice);
         public List<Table> SelectedTables => lvSolutions.CheckedItems.Cast<ListViewItem>().Select(li => (Table)li.Tag).ToList();
 
         public void DisplayTables(bool onlyFaulty = false)

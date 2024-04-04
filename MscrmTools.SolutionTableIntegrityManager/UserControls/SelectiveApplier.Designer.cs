@@ -32,8 +32,8 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectiveApplier));
             this.pnlTop = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblDesc = new System.Windows.Forms.Label();
+            this.lblTitle = new System.Windows.Forms.Label();
             this.pnlBottom = new System.Windows.Forms.Panel();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnMaximize = new System.Windows.Forms.Button();
@@ -51,10 +51,10 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbCheckAll = new System.Windows.Forms.ToolStripButton();
             this.tsbUncheckAll = new System.Windows.Forms.ToolStripButton();
-            this.scintilla1 = new ScintillaNET.Scintilla();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tslCount = new System.Windows.Forms.ToolStripLabel();
+            this.scintilla1 = new ScintillaNET.Scintilla();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pnlTop.SuspendLayout();
             this.pnlBottom.SuspendLayout();
             this.pnlMain.SuspendLayout();
@@ -68,8 +68,8 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             // pnlTop
             // 
             this.pnlTop.BackColor = System.Drawing.Color.White;
-            this.pnlTop.Controls.Add(this.label2);
-            this.pnlTop.Controls.Add(this.label1);
+            this.pnlTop.Controls.Add(this.lblDesc);
+            this.pnlTop.Controls.Add(this.lblTitle);
             this.pnlTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlTop.Location = new System.Drawing.Point(0, 0);
             this.pnlTop.Name = "pnlTop";
@@ -77,26 +77,26 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             this.pnlTop.Size = new System.Drawing.Size(1647, 105);
             this.pnlTop.TabIndex = 0;
             // 
-            // label2
+            // lblDesc
             // 
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Font = new System.Drawing.Font("Segoe UI Variable Text", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(10, 55);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(1627, 40);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Select items to see details of the changed properties, check those you want to in" +
+            this.lblDesc.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblDesc.Font = new System.Drawing.Font("Segoe UI Variable Text", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDesc.Location = new System.Drawing.Point(10, 55);
+            this.lblDesc.Name = "lblDesc";
+            this.lblDesc.Size = new System.Drawing.Size(1627, 40);
+            this.lblDesc.TabIndex = 1;
+            this.lblDesc.Text = "Select items to see details of the changed properties, check those you want to in" +
     "clude in your solution and click on Apply button";
             // 
-            // label1
+            // lblTitle
             // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Font = new System.Drawing.Font("Segoe UI Variable Text", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(10, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1627, 45);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Check items you want to include in your solution";
+            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI Variable Text", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.Location = new System.Drawing.Point(10, 10);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(1627, 45);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "Check items you want to include in your solution";
             // 
             // pnlBottom
             // 
@@ -233,20 +233,20 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             // tslSearch
             // 
             this.tslSearch.Name = "tslSearch";
-            this.tslSearch.Size = new System.Drawing.Size(64, 52);
+            this.tslSearch.Size = new System.Drawing.Size(64, 29);
             this.tslSearch.Text = "Search";
             // 
             // tstbSearch
             // 
             this.tstbSearch.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.tstbSearch.Name = "tstbSearch";
-            this.tstbSearch.Size = new System.Drawing.Size(200, 57);
+            this.tstbSearch.Size = new System.Drawing.Size(200, 34);
             this.tstbSearch.TextChanged += new System.EventHandler(this.tstbSearch_TextChanged);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 57);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 34);
             // 
             // tsbCheckAll
             // 
@@ -263,8 +263,20 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             this.tsbUncheckAll.Image = ((System.Drawing.Image)(resources.GetObject("tsbUncheckAll.Image")));
             this.tsbUncheckAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbUncheckAll.Name = "tsbUncheckAll";
-            this.tsbUncheckAll.Size = new System.Drawing.Size(104, 52);
+            this.tsbUncheckAll.Size = new System.Drawing.Size(104, 29);
             this.tsbUncheckAll.Text = "Uncheck all";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 34);
+            // 
+            // tslCount
+            // 
+            this.tslCount.Name = "tslCount";
+            this.tslCount.Size = new System.Drawing.Size(156, 29);
+            this.tslCount.Tag = "Checked assets : {0}";
+            this.tslCount.Text = "Checked assets : 0";
             // 
             // scintilla1
             // 
@@ -294,18 +306,6 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
             this.imageList1.Images.SetKeyName(8, "line-chart.png");
             this.imageList1.Images.SetKeyName(9, "loop.png");
             this.imageList1.Images.SetKeyName(10, "button.png");
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 57);
-            // 
-            // tslCount
-            // 
-            this.tslCount.Name = "tslCount";
-            this.tslCount.Size = new System.Drawing.Size(156, 52);
-            this.tslCount.Tag = "Checked assets : {0}";
-            this.tslCount.Text = "Checked assets : 0";
             // 
             // SelectiveApplier
             // 
@@ -342,8 +342,8 @@ namespace MscrmTools.SolutionTableIntegrityManager.UserControls
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnMaximize;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.Label lblDesc;
         private System.Windows.Forms.ListView lvLogs;
         private System.Windows.Forms.ColumnHeader chTable;
         private System.Windows.Forms.ColumnHeader chType;
